@@ -1,3 +1,4 @@
-# StocksAPI
+# XCAStocksAPI
 
-A description of this package.
+
+This library provides a very simple way to interact with Yahoo Finance REST API using Swift.

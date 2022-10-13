@@ -11,7 +11,7 @@ public struct QuoteResponse: Decodable {
     
     public let data: [Quote]?
     public let error: ErrorResponse?
-
+    
     enum CodingKeys: CodingKey {
         case quoteResponse
         case finance
@@ -27,29 +27,33 @@ public struct QuoteResponse: Decodable {
         if let quoteResponseContainer = try? container.nestedContainer(keyedBy: ResponseKeys.self, forKey: .quoteResponse) {
             self.data = try? quoteResponseContainer.decodeIfPresent([Quote].self, forKey: .result)
             self.error = try? quoteResponseContainer.decodeIfPresent(ErrorResponse.self, forKey: .error)
-        
-        } else if let financeContainer = try? container.nestedContainer(keyedBy: ResponseKeys.self, forKey: .finance) {
-            self.data = try? financeContainer.decodeIfPresent([Quote].self, forKey: .result)
-            self.error = try? financeContainer.decodeIfPresent(ErrorResponse.self, forKey: .error)
+        } else if let financeResponseContainer = try? container.nestedContainer(keyedBy: ResponseKeys.self, forKey: .finance) {
+            self.data = nil
+            self.error = try? financeResponseContainer.decodeIfPresent(ErrorResponse.self, forKey: .error)
         } else {
             self.data = nil
             self.error = nil
         }
     }
-    
 }
 
-public struct Quote: Codable, Identifiable, Hashable {
+public struct Quote: Decodable, Identifiable, Hashable {
+    
     public let id = UUID()
+    
+    public let symbol: String
+
     public let currency: String?
     public let marketState: String?
+    
     public let fullExchangeName: String?
     public let displayName: String?
-    public let symbol: String?
+    
     public let regularMarketPrice: Double?
     public let regularMarketChange: Double?
     public let regularMarketChangePercent: Double?
     public let regularMarketChangePreviousClose: Double?
+    public let regularMarketTime: Date?
     
     public let postMarketPrice: Double?
     public let postMarketChange: Double?
@@ -69,16 +73,17 @@ public struct Quote: Codable, Identifiable, Hashable {
     public let trailingAnnualDividendYield: Double?
     public let epsTrailingTwelveMonths: Double?
     
-    public init(currency: String?, marketState: String?, fullExchangeName: String?, displayName: String?, symbol: String?, regularMarketPrice: Double?, regularMarketChange: Double?, regularMarketChangePercent: Double?, regularMarketChangePreviousClose: Double?, postMarketPrice: Double?, postMarketChange: Double?, regularMarketOpen: Double?, regularMarketDayHigh: Double?, regularMarketDayLow: Double?, regularMarketVolume: Double?, trailingPE: Double?, marketCap: Double?, fiftyTwoWeekLow: Double?, fiftyTwoWeekHigh: Double?, averageDailyVolume3Month: Double?, trailingAnnualDividendYield: Double?, epsTrailingTwelveMonths: Double?) {
+    public init(symbol: String, currency: String? = nil, marketState: String? = nil, fullExchangeName: String? = nil, displayName: String? = nil, regularMarketPrice: Double? = nil, regularMarketChange: Double? = nil, regularMarketChangePercent: Double? = nil, regularMarketChangePreviousClose: Double? = nil, regularMarketTime: Date? = nil, postMarketPrice: Double? = nil, postMarketChange: Double? = nil, regularMarketOpen: Double? = nil, regularMarketDayHigh: Double? = nil, regularMarketDayLow: Double? = nil, regularMarketVolume: Double? = nil, trailingPE: Double? = nil, marketCap: Double? = nil, fiftyTwoWeekLow: Double? = nil, fiftyTwoWeekHigh: Double? = nil, averageDailyVolume3Month: Double? = nil, trailingAnnualDividendYield: Double? = nil, epsTrailingTwelveMonths: Double? = nil) {
+        self.symbol = symbol
         self.currency = currency
         self.marketState = marketState
         self.fullExchangeName = fullExchangeName
         self.displayName = displayName
-        self.symbol = symbol
         self.regularMarketPrice = regularMarketPrice
         self.regularMarketChange = regularMarketChange
         self.regularMarketChangePercent = regularMarketChangePercent
         self.regularMarketChangePreviousClose = regularMarketChangePreviousClose
+        self.regularMarketTime = regularMarketTime
         self.postMarketPrice = postMarketPrice
         self.postMarketChange = postMarketChange
         self.regularMarketOpen = regularMarketOpen
